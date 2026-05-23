@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Počet dní od – MFF UK</title>
+    <style>
+        :root {
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --text: #e0e0e0;
+            --text-muted: #888888;
+            --accent: #4af626;
+            --accent-dim: #2b7a18;
+            --border: #333333;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .terminal-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prompt { color: var(--accent); font-weight: bold; }
+        .path { color: #569cd6; }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: var(--text);
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .btn {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-family: inherit;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background: var(--border); }
+        .btn.action-btn { color: var(--accent); border-color: var(--accent-dim); }
+        .btn.action-btn:hover { background: var(--accent-dim); color: #fff; }
+
+        #error-msg { color: #f44747; display: none; margin-bottom: 1rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+
+        .counter-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .counter-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background-color: var(--accent-dim);
+        }
+
+        .counter-name { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .counter-desc { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; }
+        .counter-value { font-size: 2rem; color: var(--accent); text-shadow: 0 0 8px rgba(74, 246, 38, 0.2); }
+        
+        .counter-info {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border);
+            padding-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-header">
+        <div>
+            <span class="prompt">user@matfyz</span>:<span class="path">~/status</span>$ ./watch_counters.sh<span class="cursor"></span>
+        </div>
+        <a href="/admin" class="btn action-btn">[#] ADMIN PANEL</a>
+    </div>
+
+    <div id="error-msg"></div>
+    <div class="grid" id="counters-grid"></div>
+
+    <script>
+        let counters = [];
+
+        const escapeHtml = (str) => (str || '').toString().replace(/[&<"'>]/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'}[m]));
+
+        const formatDays = (d) => {
+            if (d === 1) return '1 den';
+            if (d >= 2 && d <= 4) return `${d} dny`;
+            return `${d} dní`;
+        };
+
+        const formatTime = (totalSeconds, precision) => {
+            const d = Math.floor(totalSeconds / 86400);
+            const h = Math.floor((totalSeconds % 86400) / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            const daysStr = d > 0 ? `${formatDays(d)} ` : '';
+
+            switch (precision) {
+                case 'day': return formatDays(d);
+                case 'few-hours':
+                case 'hour': return `${daysStr}${h}h`;
+                case 'minute': return `${daysStr}${h}h ${m}m`;
+                case 'second':
+                default: return `${daysStr}${h}h ${m}m ${s}s`;
+            }
+        };
+
+        const renderGrid = () => {
+            const grid = document.getElementById('counters-grid');
+            grid.innerHTML = counters.map(c => `
+                <div class="counter-card">
+                    <div class="counter-name">[ ${escapeHtml(c.name)} ]</div>
+                    <div class="counter-desc">${escapeHtml(c.description) || 'No description'}</div>
+                    <div class="counter-value" id="val-${escapeHtml(c.name)}">...</div>
+                    ${c.info ? `<div class="counter-info">${escapeHtml(c.info)}</div>` : ''}
+                </div>
+            `).join('');
+        };
+
+        const tick = () => {
+            const now = Math.floor(Date.now() / 1000);
+            counters.forEach(c => {
+                const el = document.getElementById(`val-${escapeHtml(c.name)}`);
+                if (el) el.innerText = formatTime(Math.max(0, now - c.timestamp), c.precision);
+            });
+        };
+
+        const fetchCounters = async () => {
+            try {
+                const res = await fetch('/counters');
+                if (!res.ok) throw new Error(res.statusText);
+                
+                counters = await res.json();
+                document.getElementById('error-msg').style.display = 'none';
+                
+                renderGrid();
+                tick();
+            } catch (err) {
+                const errEl = document.getElementById('error-msg');
+                errEl.innerText = `[ERR] API unreachable: ${err.message}`;
+                errEl.style.display = 'block';
+            }
+        };
+
+        fetchCounters();
+        setInterval(tick, 1000);
+        setInterval(fetchCounters, 15000);
+    </script>
+</body>
+</html>
