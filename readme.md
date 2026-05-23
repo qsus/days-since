@@ -13,3 +13,10 @@ flask --app app run
 ```bash
 gunicorn -w 4 app:app
 ```
+
+## Systemd služba
+```bash
+sudo cp days-since.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now days-since
+```
