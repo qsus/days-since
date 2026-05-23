@@ -3,6 +3,7 @@ import sqlite3
 import time
 from functools import wraps
 from typing import Any, Dict, Optional
+import traceback
 
 import bcrypt
 import click
@@ -201,6 +202,8 @@ def create_app() -> Flask:
 
     @app.errorhandler(Exception)
     def handle_generic_exception(e: Exception):
+        traceback.print_exc()
+
         return jsonify(error="An unexpected internal server error occurred."), 500
 
     # ==============================================================================

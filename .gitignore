@@ -1,2 +1,3 @@
 /.password
 /counters.db
+__pycache__
