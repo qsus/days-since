@@ -1,0 +1,289 @@
+:root {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --text: #e0e0e0;
+    --text-muted: #888888;
+    --accent: #4af626;
+    --accent-dim: #2b7a18;
+    --danger: #ff5555;
+    --danger-dim: #880000;
+    --border: #333333;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+    margin: 0;
+    padding: clamp(1rem, 3vw, 2rem);
+    line-height: 1.6;
+}
+
+.terminal-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.terminal-header > div,
+.terminal-header > a {
+    min-width: 0;
+}
+
+.prompt {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.path {
+    color: #569cd6;
+}
+
+.btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-family: inherit;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.4rem;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background: var(--border);
+}
+
+.btn.action-btn {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+}
+
+.btn.action-btn:hover {
+    background: var(--accent-dim);
+    color: #fff;
+}
+
+.btn.danger-btn {
+    color: var(--danger);
+    border-color: var(--danger-dim);
+}
+
+.btn.danger-btn:hover {
+    background: var(--danger-dim);
+    color: #fff;
+}
+
+.header-actions {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.header-actions .btn {
+    flex: 1 1 11.5rem;
+    min-width: 0;
+}
+
+.auth-bar {
+    margin-bottom: 1.5rem;
+    max-width: 22rem;
+}
+
+.auth-bar label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.auth-bar > label {
+    margin-bottom: 0.45rem;
+}
+
+.auth-bar input[type="password"] {
+    display: block;
+    width: 100%;
+    max-width: 18rem;
+    padding: 0.4rem 0.5rem;
+}
+
+.remember-pass {
+    display: block;
+    margin-top: 0.75rem;
+    color: var(--text);
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.9rem;
+}
+
+.remember-pass input {
+    width: auto;
+    margin: 0 0.45rem 0 0;
+    vertical-align: middle;
+}
+
+input,
+select {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-family: inherit;
+    padding: 0.3rem;
+    width: 100%;
+    min-width: 0;
+    line-height: 1.25;
+    min-height: 2.2rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    min-height: 0;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 1.5rem;
+}
+
+.counter-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.counter-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--accent-dim);
+}
+
+.counter-name {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.85rem;
+    margin-bottom: 0.9rem;
+}
+
+.counter-desc {
+    color: var(--text);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+}
+
+.counter-value {
+    font-size: 2rem;
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(74, 246, 38, 0.2);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    min-height: 2.4rem;
+    overflow-wrap: anywhere;
+}
+
+.counter-info {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 0.75rem;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.35rem;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.5rem;
+}
+
+.actions .btn {
+    width: 100%;
+}
+
+#error-msg,
+#log {
+    margin-bottom: 1rem;
+}
+
+.log-entry {
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.log-ok {
+    color: var(--text-muted);
+}
+
+.log-err {
+    color: var(--danger);
+}
+
+@media (max-width: 640px) {
+    .auth-bar {
+        max-width: none;
+    }
+
+    .auth-bar input[type="password"] {
+        max-width: none;
+    }
+}
