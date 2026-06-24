@@ -69,6 +69,10 @@ def create_app() -> Flask:
     def serve_admin():
         """Serves the admin dashboard."""
         return send_from_directory('www', 'admin.html')
+    
+    @app.route('/favicon.ico')
+    def serve_favicon():
+        return send_from_directory('www', 'favicon.ico')
 
     # ==============================================================================
     # Authentication Middleware
