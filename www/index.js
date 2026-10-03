@@ -87,6 +87,9 @@
                     domId: makeDomId(counter.name)
                 }));
 
+                // Sort from newest
+                counters.sort((a, b) => b.timestamp - a.timestamp);
+
                 errorEl.style.display = 'none';
                 renderGrid();
                 tick();
